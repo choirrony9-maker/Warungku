@@ -9,36 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
-    - name: Ekstrak ZIP Proyek
-      run: unzip -o Warungku-Android-Project.zip
-      
     - uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-        
     - uses: gradle/actions/setup-gradle@v3
-    
-    - name: Build APK
-      run: |
-        # Mencari folder yang berisi file gradlew secara otomatis
-        PROJECT_DIR=$(find . -name "gradlew" -exec dirname {} \; | head -n 1)
-        
-        if [ -z "$PROJECT_DIR" ]; then
-          echo "Error: File gradlew tidak ditemukan di mana pun!"
-          echo "Daftar file yang ada:"
-          ls -R
-          exit 1
-        fi
-        
-        echo "Proyek ditemukan di folder: $PROJECT_DIR"
-        cd "$PROJECT_DIR"
-        chmod +x ./gradlew
-        ./gradlew assembleDebug
-        
+    - run: ./gradlew assembleDebug
     - uses: actions/upload-artifact@v4
-      if: always() # Tetap unggah jika ada error untuk pengecekan
       with:
         name: Warungku-Debug-APK
-        path: "**/app/build/outputs/apk/debug/app-debug.apk"
+        path: app/build/outputs/apk/debug/app-debug.apk
